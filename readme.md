@@ -6,6 +6,7 @@
 #!/bin/bash
 echo "Scripting is fun!"
 '''
+
 '#!'tell which interpreter will be used by script.
 
 1, sh(Bourne Shell): basic Unix shell.
