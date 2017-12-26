@@ -209,3 +209,115 @@ read -p "Enter a user name: " USER
 echo "Archiveing user: $USER" 
 ```
 
+## 2, Exit statuses and Return Codes
+
+### 2.1 Return Code
+
+Every command returns an exit status
+
+Range from 0 to 255, 0 = success, other = error
+
+**pingGoogle**
+
+```
+#!/bin/bash
+MY_HOST="google.com"
+ping -c 1 $MY_HOST
+if [ "$?" -eq "0" ]
+then
+	echo "${MY_HOST} reachable"
+else
+  	echo "${MY_HOST} unreachable"
+fi
+
+```
+
+
+$? contains the return code of the previously executed command.
+
+* **&&(and)**: only if the first one is true we run second one.
+* **||(or)**: only if the first one is false we run second one.
+* **;(semicolon)**: ensure they all get executed
+
+### 2.2 Exit Command
+
+Explicitly define the return code 1-255
+
+The default value is that the last command executed: exit 0
+
+```
+ping -c 1 -w 1 amazon.com 
+echo $? #1 
+ping -c 1 amazon.com.blah
+echo $? #2
+man ping # look forward what exit command for
+```
+
+## 3, Functions
+
+### 3.1 Define function
+
+**DRY**: donot repeat yourself
+
+```
+function function-name(){
+	# Code goes here.
+}
+ 
+# Call the function
+function-name
+```
+
+Execute from top to the buttom, no precompiled
+
+Variables have to be defined before used
+
+* **By default, variables are global**
+* **WE can use local to create local varible**
+
+### 3.2 Positional Parameters
+
+* $0: the script itselft
+* $1, $2 ...:parameters
+* $@: all of the parameters
+
+
+```
+#!/bin/bash
+function hello(){
+	for NAME in $@
+	do 
+		echo "Hello $NAME"
+	done
+}
+hello Jason Dan Ryan 
+```
+ 
+### 3.3 Exit Status(Return Codes)
+
+* Explicitly: return <RETURN_CODE>
+* Implicity: The exit status of the last command executed in the function
+
+```
+#!/bin/bash
+function backup_file()
+{
+	if [ -f $1 ]
+	then
+		local BACK="/tmp/$(basename ${1}).$(date +%F).$$"
+		echo "Backing up $1 to ${BACK}"
+		cp $1 $BACK
+	else
+		return 1
+		fi
+}
+
+backup_file /etc/hosts
+if [ $? -eq 0 ]
+then
+	echo "Backup succeeded!"
+else
+	echo "Backup failed!"
+	exit 1
+fi
+```
