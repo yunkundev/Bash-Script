@@ -321,3 +321,176 @@ else
 	exit 1
 fi
 ```
+
+## 4, Wildcards
+
+### 4.1 Wildcard Introduction
+
+Globbing expands the wildcard pattern into a list of files and/or directories.
+
+Wildcards can be used with most commands:
+
+* ls
+* rm
+* cp
+
+**Wildcard**
+
+1. * - matches zero or more character
+2. ? - matches exactly one character
+3. [] - A character class: matche any of the characters included  between the brackets. Matches exactly one character.
+4. [!] - Matches any of the characters NOT included between the brackets.
+5.  \ escapes character. Use if you want to match a wildcase character.
+
+
+Named Character Classes
+
+* [[:alpha:]] : alpha
+* [[:alnum:]] : alpha + digit
+* [[:digit:]] : digit
+* [[:lower:]] : lower case
+* [[:space:]] : widcaese
+* [[:upper:]] : upper case
+
+### 4.2 Wildcard in Shell Script
+
+Wildcards are great when you want to work on a group of files or directories. **Just like a regular command line.**
+
+
+```
+#!/bin/bash
+cd /var/www
+cp *.html /var/www-just-html
+```
+In a for loop
+
+```
+#!/bin/bash
+cd /var/www
+for FILE in *.html
+do 
+	echo "Copying $FILE"
+	cp $FILE /var/www-just-html
+done vv
+```
+
+Supply a directory in the wildcard or use the cd command to change the current directory.
+
+## 5，Others
+
+### 5.1 Case statements
+
+```
+case "$VAR" in
+	pattern_1)
+		# Commands go here.
+		;;
+	pattern_N)
+		# Commands go here.
+		;;
+esac
+```
+
+Example:
+
+```
+case "$1" in
+	start | START)
+		/usr/sbin/sshd
+		;;
+	stop | STOP)
+		kill $(cat /var/run/sshd.pid)
+		;;
+	*)
+		echo "Usage: $0 start|stop"; exit 1
+		;;
+esac
+```
+
+```
+read -p "Enter y or n: " ANSWER
+case "$ANSWER" in
+	[yY]|[yY][eE][sS])
+		echo "You answered yes."
+		;;
+	[nN]|[nN][oO])
+		echo "You answered no"
+		;;
+	*)
+		echo "Invaild answer."
+		;; 
+esac
+```
+
+
+### 5.2 Logging
+
+Logs are the who, what, when, where, and why
+
+The syslog standard uses facilities and serverities to caegorize messages.
+
+* Facilities: kern, user, mail, daemon, auth, local0, local7
+* Serverities: emerg, alert, crit, err, warning, notice, info, debug
+
+Log file locations are configurable:
+
+* /var/log/messages
+* /var/log/syslog
+
+**logging with logger**
+
+```
+$logger "Message"
+Aug 2 01:22:34 linuxsvr jason: Message
+$logger -p local0.infor "Message"
+Aug 2 01:22:41 linuxsvr jason:Message 
+
+```
+
+### 5.3 While Loops
+ 
+```
+INDEX = 1
+while [ $INDEX -lt 6 ]
+do 
+	echo "Creating project-${INDEX}"
+	mkdir /usr/local/project-${INDEX}
+	((INDEX++))
+done
+```
+Reading a file, line-by-line
+
+```
+LINE_NUM = 1
+while read LINE
+do 
+	echo "${LINE_NUM}: ${LINE}"
+	((LINE_NUM++))
+done < /etc/fstab
+```
+**break** and **continue**
+
+### 5.4 Debugging
+
+* A bug is really an error
+* -x = Prints commands as they execute
+* #!/bin/bash -x
+* set -x to debug set +x to stop debugging
+
+```
+#!/bin/bash
+TEST_VAR = "test"
+set -x
+echo $TEST_VAR
+set +x
+hostname
+```
+
+**Built in Debugging Help**
+
+* -e = Exit on error ```#!/bin/bash -ex```
+* -v = Prints shell input lines as they are read.
+
+**For more information**
+
+help set | less
